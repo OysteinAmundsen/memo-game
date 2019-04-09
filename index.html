@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Memo</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      --board-background: #4f4f4f;
+      --board-border: #a0a0a0;
+
+      margin: 0;
+      padding: 0 2px;
+      font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+      font-size: 14px;
+    }
+    header {
+      background: var(--board-background);
+      color: white;
+      padding: 2px 2rem;
+      margin: 0 -2px 1rem;
+      box-shadow: 0 0 5px 3px black;
+    }
+    header > h1 {
+      text-shadow: -3px 3px 3px black;
+      margin: 0.47em auto;
+      padding: 0 1rem;
+    }
+    .container {
+      min-width: 200px;
+      max-width: 640px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1 class="container">MEMO</h1>
+  </header>
+  <game-board class="container"></game-board>
+  <script type="module" src="game/game.js"></script>
+</body>
+</html>
