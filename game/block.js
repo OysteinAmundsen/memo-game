@@ -1,3 +1,5 @@
+'use strict';
+
 import { Component } from '../framework/component.js';
 
 export class GameBlock extends Component {

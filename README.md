@@ -1,3 +1,3 @@
-# js-ya6hzp
+# Memo
 
-[Edit on StackBlitz ⚡️](https://stackblitz.com/edit/js-ya6hzp)
+A small memory game built with web components and web standards only. No frameworks.

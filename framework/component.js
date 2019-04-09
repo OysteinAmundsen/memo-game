@@ -1,3 +1,5 @@
+'use strict';
+
 export class Component extends HTMLElement {
   html = document.createElement('template');
 

@@ -1,3 +1,5 @@
+'use strict';
+
 import { Component } from '../framework/component.js';
 import { GameBlock } from './block.js';
 import { GameStats } from './stats.js';
