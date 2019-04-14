@@ -53,6 +53,11 @@ export class GameBlock extends Component {
           font-size: 2em;
           text-shadow: 0 0 30px rgba(255,255,255,0.5);
         }
+        @media screen and (max-width: 680px) {
+          :host div {
+            font-size: calc(3vw + 1em);
+          }
+        }
       </style>
 
       <div>
