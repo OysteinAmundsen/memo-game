@@ -5,8 +5,10 @@ import { Component } from '../framework/component.js';
 export class GameStats extends Component {
   tries = 0;
   matches = 0;
+  bonus = 0;
   total = 0;
   stopWatch;
+  timeSinceLastMatch = Date.now;
 
   constructor() {
     super(`
@@ -94,15 +96,27 @@ export class GameStats extends Component {
    * @param {boolean} match
    */
   addAttempt(match) {
+    const diff = new Date(Date.now() - this.timeSinceLastMatch);
+    let timeBonus = 0;
+    if (diff.getSeconds() < 40) timeBonus++;
+    if (diff.getSeconds() < 20) timeBonus++;
+    if (diff.getSeconds() < 10) timeBonus++;
+    if (diff.getSeconds() < 5) timeBonus++;
+    console.debug('timeBonus', timeBonus);
+
     if (match) {
       this.query('.matches').innerHTML = ++this.matches;
+      this.dispatchEvent(new CustomEvent('addScore', { detail: ++this.bonus + timeBonus }));
+      this.timeSinceLastMatch = Date.now;
     } else {
-      this.query('.tries').innerHTML = ++this.tries;
+      this.bonus = 0;
     }
+    this.query('.tries').innerHTML = ++this.tries;
 
-    if (this.tries === this.total) {
+    if (this.matches === this.total) {
       clearInterval(this.stopWatch);
       this.query('.complete').innerHTML = 'COMPLETE!!';
+      this.dispatchEvent(new CustomEvent('gameComplete'));
     }
   }
 }

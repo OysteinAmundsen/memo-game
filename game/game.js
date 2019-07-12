@@ -15,6 +15,9 @@ export class GameBoard extends Component {
       '🎵', '📷', '💡', '📗', '⌚'
     ]
   };
+  score = 0;
+  highscore = +localStorage.getItem('highscore') || 0;
+  fastest = localStorage.getItem('fastest') || '';
 
   lastBlock;
   closeTimer;
@@ -64,12 +67,16 @@ export class GameBoard extends Component {
       <game-stats></game-stats>
       <main></main>
       <footer class="container">
+        <span>Score: <b id="score"></b></span>
         <button type="button"><u>R</u>estart</button>
+        <span><b id="highscore"></b>: Highscore</span>
       </footer>
     `);
     this.blockTurned = this.blockTurned.bind(this);
     this.closeAll = this.closeAll.bind(this);
     this.restart = this.restart.bind(this);
+    this.addScore = this.addScore.bind(this);
+    this.calcHighscore = this.calcHighscore.bind(this);
   }
 
   /**
@@ -77,7 +84,7 @@ export class GameBoard extends Component {
    */
   connectedCallback() {
     super.connectedCallback();
-    this.setup();
+    this.restart();
 
     // Setup restart events
     this.query('button').addEventListener('click', evt => this.restart());
@@ -127,6 +134,8 @@ export class GameBoard extends Component {
       }
     }
     this.getStats().setTotal(array.length / 2);
+    this.getStats().addEventListener('addScore', this.addScore);
+    this.getStats().addEventListener('gameComplete', this.calcHighscore);
   }
 
   /**
@@ -135,6 +144,9 @@ export class GameBoard extends Component {
   restart() {
     this.query('main').innerHTML = '';
     this.setup();
+    this.score = 0;
+    this.addScore({detail: 0});
+    this.calcHighscore();
     this.getStats().restart();
   }
 
@@ -178,6 +190,18 @@ export class GameBoard extends Component {
     else if (currentBlock === this.lastBlock) {
       this.lastBlock = null;
     }
+  }
+
+  addScore(evt) {
+    this.query('#score').innerHTML = this.score += evt.detail;
+  }
+
+  calcHighscore() {
+    if (this.highscore < this.score) {
+      this.highscore = this.score;
+      localStorage.setItem('highscore', this.highscore);
+    }
+    this.query('#highscore').innerHTML = this.highscore;
   }
 
   /**
