@@ -129,15 +129,13 @@ export class GameBoard extends Component {
         array.push(`${r}_${c}`);
       }
     }
-    this.board.symbols = [...Array(20)].map((e, i, arr) => {
+    this.board.symbols = [...Array(20)].reduce((arr, e) => {
       const getEmoji = () => emojis[Math.floor(Math.random() * emojis.length)];
       let emoji = getEmoji();
-      while (arr.indexOf(emoji) > -1) {
-        debugger;
-        emoji = getEmoji();
-      }
-      return emoji;
-    });
+      while (arr.indexOf(emoji) > -1) { emoji = getEmoji(); }
+      arr.push(emoji);
+      return arr;
+    }, []);
 
     // Shuffle the board array
     let currentIndex = array.length, temporaryValue, randomIndex;
