@@ -9,6 +9,7 @@ export class GameStats extends Component {
   total = 0;
   stopWatch;
   timeSinceLastMatch = Date.now;
+  bonusTimer;
 
   constructor() {
     super(`
@@ -105,18 +106,24 @@ export class GameStats extends Component {
    * @param {boolean} match
    */
   addAttempt(match) {
-    const diff = new Date(Date.now() - this.timeSinceLastMatch);
-    let timeBonus = 0;
-    if (diff.getSeconds() < 40) timeBonus++;
-    if (diff.getSeconds() < 20) timeBonus++;
-    if (diff.getSeconds() < 10) timeBonus++;
-    if (diff.getSeconds() < 5) timeBonus++;
-    console.debug('timeBonus', timeBonus);
-
     if (match) {
+
+      const diff = new Date(Date.now() - this.timeSinceLastMatch);
+      let timeBonus = 0;
+      let bonusText = '';
+      if (diff.getSeconds() < 30) { timeBonus++; bonusText = 'Less than 30 seconds'; }
+      if (diff.getSeconds() < 15) { timeBonus++; bonusText = 'Less than 15 seconds! Good job.'; }
+      if (diff.getSeconds() < 8)  { timeBonus++; bonusText = `That's fast!!`; }
+      if (diff.getSeconds() < 4)  { timeBonus++; bonusText = `Wow! That's really fast!!`; }
+      if (diff.getSeconds() < 2)  { timeBonus++; bonusText = `Unbelievable!!!`; }
+
       this.query('.matches').innerHTML = ++this.matches;
       this.dispatchEvent(new CustomEvent('addScore', { detail: ++this.bonus + timeBonus }));
-      this.timeSinceLastMatch = Date.now;
+      this.timeSinceLastMatch = Date.now();
+      if (this.bonus > 0 || timeBonus > 0) {
+        const bonus = this.bonus + timeBonus;
+        this.reward(bonusText + ' ' + (bonus > 0 ? `${bonus} bonus points!` : ''));
+      }
     } else {
       this.bonus = 0;
     }
@@ -124,9 +131,17 @@ export class GameStats extends Component {
 
     if (this.matches === this.total) {
       clearInterval(this.stopWatch);
+      clearTimeout(this.bonusTimer);
       this.query('.complete').innerHTML = 'COMPLETE!!';
       this.dispatchEvent(new CustomEvent('gameComplete'));
     }
+  }
+
+  reward(text) {
+    if (this.bonusTimer) { clearTimeout(this.bonusTimer); }
+
+    this.query('.complete').innerHTML = text;
+    this.bonusTimer = setTimeout(() => this.query('.complete').innerHTML = '', 3000);
   }
 }
 customElements.define('game-stats', GameStats);
