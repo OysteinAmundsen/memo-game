@@ -53,19 +53,29 @@ export class GameStats extends Component {
    * Start the internal stop watch keeping track of
    * the game duration.
    */
-  startTimer() {
+  startTimer(start) {
     if (this.stopWatch) { clearInterval(this.stopWatch); }
 
     const timer = this.query('.time');
-    const start = Date.now();
+    start = start || Date.now();
 
-    this.stopWatch = setInterval(() => {
-      const diff = new Date(Date.now() - start);
-      let hours = diff.getHours() - 1;
-      let minutes = diff.getMinutes() < 10 ? '0' + diff.getMinutes() : diff.getMinutes();
-      let seconds = diff.getSeconds() < 10 ? '0' + diff.getSeconds() : diff.getSeconds();
+    const timerFn = () => {
+      const difference = Date.now() - start;
+      let hours = 0;
+      let minutes = '-00';
+      let seconds;
+      if (difference < 0) {
+        seconds = '0' + Math.abs(Math.floor(difference / 1000));
+      } else {
+        const diff = new Date(difference);
+        hours = diff.getHours() - 1;
+        minutes = diff.getMinutes() < 10 ? '0' + diff.getMinutes() : diff.getMinutes();
+        seconds = diff.getSeconds() < 10 ? '0' + diff.getSeconds() : diff.getSeconds();
+      }
       timer.innerHTML = `${hours > 0 ? hours + ':' : ''}${minutes}:${seconds}`;
-    }, 1000);
+    }
+    timerFn();
+    this.stopWatch = setInterval(() => timerFn(), 1000);
   }
 
   /**
@@ -81,12 +91,11 @@ export class GameStats extends Component {
   /**
    * Null out all current stats and start over
    */
-  restart() {
+  restart(start) {
     this.query('.matches').innerHTML = this.matches = 0;
     this.query('.tries').innerHTML = this.tries = 0;
     this.query('.complete').innerHTML = '';
-    this.query('.time').innerHTML = '00:00';
-    this.startTimer();
+    this.startTimer(start);
   }
 
   /**
